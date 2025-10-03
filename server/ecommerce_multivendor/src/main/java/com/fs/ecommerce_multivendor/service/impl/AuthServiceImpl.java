@@ -5,16 +5,19 @@ import com.fs.ecommerce_multivendor.dto.AuthResponse;
 import com.fs.ecommerce_multivendor.dto.LoginRequest;
 import com.fs.ecommerce_multivendor.dto.SignupRequest;
 import com.fs.ecommerce_multivendor.entity.Cart;
+import com.fs.ecommerce_multivendor.entity.Seller;
 import com.fs.ecommerce_multivendor.entity.User;
 import com.fs.ecommerce_multivendor.entity.VerificationCode;
 import com.fs.ecommerce_multivendor.enums.USER_ROLE;
 import com.fs.ecommerce_multivendor.repository.CartRepository;
+import com.fs.ecommerce_multivendor.repository.SellerRepository;
 import com.fs.ecommerce_multivendor.repository.UserRepository;
 import com.fs.ecommerce_multivendor.repository.VerificationCodeRepository;
 import com.fs.ecommerce_multivendor.service.AuthService;
 import com.fs.ecommerce_multivendor.service.EmailService;
 import com.fs.ecommerce_multivendor.utils.OtpUtil;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,17 +32,9 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    public AuthServiceImpl(CustomUserServiceImpl customUserService, EmailService emailService, VerificationCodeRepository verificationCodeRepository, JwtProvider jwtProvider, CartRepository cartRepository, PasswordEncoder passwordEncoder, UserRepository userRepository) {
-        this.customUserService = customUserService;
-        this.emailService = emailService;
-        this.verificationCodeRepository = verificationCodeRepository;
-        this.jwtProvider = jwtProvider;
-        this.cartRepository = cartRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
-    }
+
 
     private final CustomUserServiceImpl customUserService;
     private final EmailService emailService;
@@ -48,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
     private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final SellerRepository sellerRepository;
 
     @Override
     public String createUser(SignupRequest signupRequest) {
@@ -88,16 +84,25 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void sentLoginOtp(String email) {
+    public void sentLoginOtp(String email,USER_ROLE role) {
         String SIGNING_PREFIX = "signin_";
+
 
         if(email.startsWith(SIGNING_PREFIX)){
             email = email.substring(SIGNING_PREFIX.length());
 
-            User user = userRepository.findByEmail(email);
-            if (user==null){
-                throw new RuntimeException("User not exist with provided email");
+            if(role.equals(USER_ROLE.ROLE_SELLER)){
+
+                Seller seller = sellerRepository.findByEmail(email);
+                if(seller == null) throw new RuntimeException("Seller not found with this email"+email);
+
+            }else{
+                User user = userRepository.findByEmail(email);
+                if (user==null){
+                    throw new RuntimeException("User not exist with provided email");
+                }
             }
+
         }
 
         VerificationCode isVerificationCodeExist = verificationCodeRepository.findByEmail(email);
@@ -149,7 +154,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);
-
+        System.out.println(verificationCode);
         if(verificationCode == null || !verificationCode.getOtp().equals(otp)){
             throw new RuntimeException("Wrong otp");
         }

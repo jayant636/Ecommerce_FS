@@ -1,16 +1,17 @@
 package com.fs.ecommerce_multivendor.dto;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ApiResponse {
     private String message;
 
-    public String getMessage() {
-        return message;
-    }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

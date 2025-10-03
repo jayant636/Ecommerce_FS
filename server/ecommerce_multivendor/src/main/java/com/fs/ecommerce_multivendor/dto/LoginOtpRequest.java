@@ -6,16 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthResponse {
-
-    private String jwt;
-    private String message;
-    private USER_ROLE role;
-
-
+public class LoginOtpRequest {
+   private String email;
+   private String otp;
+   private USER_ROLE role;
 }

@@ -1,9 +1,6 @@
 package com.fs.ecommerce_multivendor.controller;
 
-import com.fs.ecommerce_multivendor.dto.ApiResponse;
-import com.fs.ecommerce_multivendor.dto.AuthResponse;
-import com.fs.ecommerce_multivendor.dto.LoginRequest;
-import com.fs.ecommerce_multivendor.dto.SignupRequest;
+import com.fs.ecommerce_multivendor.dto.*;
 import com.fs.ecommerce_multivendor.entity.VerificationCode;
 import com.fs.ecommerce_multivendor.enums.USER_ROLE;
 import com.fs.ecommerce_multivendor.repository.UserRepository;
@@ -40,9 +37,9 @@ public class AuthController {
     }
 
     @PostMapping(path = "/sent/login-signup-otp")
-    public ResponseEntity<ApiResponse> sentOtpHandler(@RequestBody VerificationCode verificationCode) throws Exception{
+    public ResponseEntity<ApiResponse> sentOtpHandler(@RequestBody LoginOtpRequest loginOtpRequest) throws Exception{
 
-       authService.sentLoginOtp(verificationCode.getEmail());
+       authService.sentLoginOtp(loginOtpRequest.getEmail(),loginOtpRequest.getRole());
 
         ApiResponse response = new ApiResponse();
 
