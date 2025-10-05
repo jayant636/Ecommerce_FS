@@ -1,5 +1,6 @@
 package com.fs.ecommerce_multivendor.service.impl;
 
+import com.fs.ecommerce_multivendor.Exception.SellerException;
 import com.fs.ecommerce_multivendor.config.JwtProvider;
 import com.fs.ecommerce_multivendor.entity.AccountStatus;
 import com.fs.ecommerce_multivendor.entity.Address;
@@ -25,7 +26,7 @@ public class SellerServiceImpl implements SellerService {
     private final SellerRepository sellerRepository;
 
     @Override
-    public Seller getSellerProfile(String jwt) {
+    public Seller getSellerProfile(String jwt) throws SellerException {
         String email = jwtProvider.getEmailFromJwtToken(jwt);
         return getSellerByEmail(email);
     }
@@ -52,14 +53,14 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public Seller getSellerById(Long id) throws Exception {
-        return sellerRepository.findById(id).orElseThrow(()-> new Exception("Seller Not Found with this id..."+id));
+    public Seller getSellerById(Long id) throws SellerException {
+        return sellerRepository.findById(id).orElseThrow(()-> new SellerException("Seller Not Found with this id..."+id));
     }
 
     @Override
-    public Seller getSellerByEmail(String email) {
+    public Seller getSellerByEmail(String email) throws SellerException {
         Seller seller = sellerRepository.findByEmail(email);
-        if(seller == null) throw new RuntimeException("Seller with this email is not available"+email);
+        if(seller == null) throw new SellerException("Seller doesn't exist with this email"+email);
         return seller;
     }
 
@@ -119,7 +120,7 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public Seller verifyEmail(String email, String otp) {
+    public Seller verifyEmail(String email, String otp) throws SellerException {
        Seller seller = getSellerByEmail(email);
        seller.setEmailVerified(true);
         return sellerRepository.save(seller);

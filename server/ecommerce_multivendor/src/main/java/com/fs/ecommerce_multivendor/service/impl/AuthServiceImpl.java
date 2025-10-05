@@ -44,6 +44,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final SellerRepository sellerRepository;
+    private static final String SELLER_PREFIX = "seller_";
 
     @Override
     public String createUser(SignupRequest signupRequest) {
@@ -148,6 +149,11 @@ public class AuthServiceImpl implements AuthService {
 
     private Authentication authenticate(String username, String otp) {
         UserDetails userDetails = customUserService.loadUserByUsername(username);
+
+//        removing seller_prefix from email
+        if(username.startsWith(SELLER_PREFIX)){
+           username = username.substring(SELLER_PREFIX.length());
+        }
 
         if(userDetails == null){
             throw new RuntimeException("Invalid username or password");
