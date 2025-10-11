@@ -20,7 +20,7 @@ public class Category {
 
     private String name;
 
-  
+
     @Column(unique = true)
     private String categoryId;
 

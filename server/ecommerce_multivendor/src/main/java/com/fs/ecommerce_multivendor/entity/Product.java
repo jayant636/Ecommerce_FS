@@ -34,7 +34,7 @@ public class Product {
 
     private String color;
 
-//    This will create separate table for images
+//  This will create separate table for images
     @ElementCollection
     private List<String> images = new ArrayList<>();
 

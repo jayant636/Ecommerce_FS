@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "Cart")
-@EqualsAndHashCode
+
 public class Cart {
 
     @Id
@@ -32,6 +32,7 @@ public class Cart {
 
     private int discount;
 
+    private int totalItem;
 
     private String couponCode;
 
